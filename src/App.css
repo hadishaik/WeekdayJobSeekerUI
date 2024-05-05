@@ -1,38 +1,129 @@
-.App {
-  text-align: center;
+body{
+  margin: 0;
+  padding: 0;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+p{
+  margin: 0;
+  padding: 0;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.container{
+position: relative;
+display: flex;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+nav{
+  position: fixed;
+  inset: 0;
+  width:100%;
+  height: 60px;;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   display: flex;
-  flex-direction: column;
-  align-items: center;
+ /* position: sticky; */
+
+}
+
+svg:hover{
+  fill: #2f3133;
+}
+
+.option:hover{
+  background-color: "black";
+}
+
+aside{
+  width: 18.53%;
+  height: 100vh;
+  background-color: aquamarine;
+  border-radius: 8px;
+  border: 2px;
+  border-color: black;
+  /* position: fixed; */
+  /* inset: 0; */
+}
+.cards-container{
+  /* margin-top: 62px; */
+  
+  /* width:100%;
+  height: 100vh; */
+}
+/* .filter{
+  width: 90%;
+  height: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+} */
+/* .switch-job{
+  margin-top: 30px;
+  margin-bottom: 30px;
+  width: 300px;
+  gap: 20px;
+  height: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  font-size: 18px;
+  line-height: normal;
+  font-family: 'Courier New', Courier, monospace;
+}
+.filter-section{
+  width: 100%;
+  height: 40px;
+  background-color: blueviolet;
+}
+
+.cards{
+  width: 90%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-left: auto;
+  margin-right: auto;
+} */
+/* .card{
+  width: 360px;
+  height: 594px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  transition: transform .2s; */
+  /* transform: scale(105); */
+/* } */
+/* .cardSpace{
+  width: 92%;
+  height: 100%; */
+  /* background-color: aqua; */
+  /* margin-left: auto;
+  margin-right: auto;
+}
+.card:hover{
+  transform: scale(1.01);
+} */
+
+/* .posted-Date{
+  width:33.75%;
+  height:22px;
+  border-radius: 40px;
+  border: 2px;
+  font-size: 10px;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 
-.App-link {
-  color: #61dafb;
-}
+.organization{
+  width: 70%;
+  height: 90px;
+  margin-top: 18px;
+  margin-bottom: 22px;
+} */
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+.lexend {
+  font-family: "Lexend", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
 }
