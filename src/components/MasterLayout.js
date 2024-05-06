@@ -1,81 +1,200 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Cards from "./Cards";
 import FilterBar from "./FilterBar";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setRoles,
+  setBasePay,
+  setEmployees,
+  setExpLevel,
+  setLocation,
+  setJobs,
+  setFilterJobs,
+} from "../reduxSlice/cardSlice";
+import apiRequest from "../apis/FetchApi";
 
 const MasterLayout = () => {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    fetchApi();
-  }, []);
+  const [searchedvalue, setSearchedvalue] = useState("");
+  const [limit, setLimit] = useState(12);
+  const data = useSelector((state) => state.filter.jobs);
+  const data1 = useSelector((state) => state.filter.roles);
+  const data3 = useSelector((state) => state.filter.expLevel);
+  const data2 = useSelector((state) => state.filter.employees);
+  const data4 = useSelector((state) => state.filter.location);
+  const data5 = useSelector((state) => state.filter.basePay);
+  const filteredCards = useSelector((state) => state.filter.filterJobs);
+  const dispatch = useDispatch();
 
   const fetchApi = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const body = JSON.stringify({
-      limit: 50,
-      offset: 0,
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body,
-    };
-
-    fetch(
-      "https://api.weekday.technology/adhoc/getSampleJdJSON",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => setData(result.jdList))
-      .catch((error) => console.error(error));
+    setLimit((prev) => prev + 12);
+    const result = await apiRequest(limit);
+    dispatch(setJobs(result.jdList));
   };
+
+  // using useMemo to Fetch Api for better Performance
+  useMemo(() => {
+    fetchApi();
+  }, [dispatch]);
+
+  // Filtering cards as per the request
+  useEffect(() => {
+    filteringCards();
+  }, [data1, data2, data3, data4, data5]);
+
+  const roles = ["frontend", "backend", "ios", "tech lead", "android"];
+  const employees = [
+    "1-10",
+    "11-20",
+    "21-50",
+    "51-100",
+    "101-200",
+    "201-500",
+    "500+",
+  ];
+  const salary = ["0L", "10L", "20L", "30L", "40L", "50L", "60L", "70L"];
+  const location = ["Remote", "Hybrid", "In-office"];
+  const exp = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+  const filteringCards = async () => {
+    const cards = data;
+    const filters = [];
+    const filterRoles = cards.filter((prev) => data1.includes(prev?.jobRole));
+    filters.push(...filterRoles); // Using push to add elements of filterRoles to filters
+    const filterExp = cards.filter((prev) =>
+      data3.includes(prev?.minExp?.toString())
+    );
+    filters.push(...filterExp); // Using push to add elements of filterExp to filters
+    const filterLoc = cards.filter((prev) => {
+      if (data4.includes("in-office")) {
+        return (
+          prev.location.toLowerCase() !== "remote" &&
+          prev.location.toLowerCase() !== "hybrid"
+        );
+      } else {
+        return data4.includes(prev.location);
+      }
+    });
+    filters.push(...filterLoc);
+    const salaries = data5.map((salary) => parseInt(salary));
+    console.log(...salaries);
+    const filterpay = cards.filter((prev) => prev?.minJdSalary >= salaries[0]);
+    filters.push(...filterpay);
+    const finalCards = filters;
+    dispatch(setFilterJobs(finalCards));
+  };
+
+  // Handle search specific Company independent function
+  const handleCompanySearch = (e) => {
+    const value = e.target.value;
+    console.log(value, "i am value");
+    // setSearchedvalue(value)
+    const cards = data;
+    const timer = setTimeout(() => {
+      const companySearch = cards.filter(
+        (prev) => prev.companyName.toLowerCase() === value.toLowerCase()
+      );
+      dispatch(setFilterJobs(companySearch));
+    }, 1000);
+    return () => clearTimeout(timer);
+  };
+
+  // handle Search function
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setSearchedvalue(value);
+
+    // input field is Empty String it sets State to empty
+    if (value === "") {
+      setSearchedvalue("");
+    }
+  };
+
+  const appliedFilters =
+    data1.length >= 1 ||
+    data2.length >= 1 ||
+    data3.length >= 1 ||
+    data4.length >= 1 ||
+    filteredCards.length >= 1;
   return (
     <main className="container" key={1}>
       <div className="" style={styles.cardsContainer}>
         <div className="" style={styles.filter}>
           <div className="" style={styles.filterSection}>
+            {/* Filtering input/DropDowns Reusable Component */}
             <FilterBar
-              width={"152px"}
+              width={"200px"}
               placeholder={"Roles"}
               searchArea={"70%"}
               subTitle={"Engineering"}
+              list={roles}
+              handleChange={handleChange}
+              searchedvalue={searchedvalue}
+              tags={data1} // tags Prop for dynamatically getting the tags
+              setState={setRoles} //setState Prop for setting the states dynamatically
             />
             <FilterBar
-              width={"200px"}
+              width={"230px"}
               placeholder={"Number of Employees"}
               searchArea={"80%"}
+              list={employees}
+              setState={setEmployees}
+              tags={data2}
+              handleChange={handleChange}
+              searchedvalue={searchedvalue}
             />
             <FilterBar
               width={"140px"}
               placeholder={"Experience"}
               searchArea={"62%"}
+              list={exp}
+              setState={setExpLevel}
+              tags={data3}
+              handleChange={handleChange}
+              searchedvalue={searchedvalue}
             />
             <FilterBar
-              width={"110px"}
+              width={"140px"}
               placeholder={"Remote"}
               searchArea={"55%"}
+              list={location}
+              setState={setLocation}
+              tags={data4}
+              handleChange={handleChange}
+              searchedvalue={searchedvalue}
             />
             <FilterBar
               width={"220px"}
               placeholder={"Minimum Base Pay Salary"}
               searchArea={"90%"}
+              list={salary}
+              setState={setBasePay}
+              tags={data5}
+              handleChange={handleChange}
+              searchedvalue={searchedvalue}
             />
             <FilterBar
-              width={"220px"}
+              width={"180px"}
               placeholder={"Search Company Name"}
-              searchArea={"80%"}
+              searchArea={"90%"}
+              tags={[]}
+              handleChange={handleCompanySearch}
+              searchedvalue={searchedvalue}
             />
           </div>
         </div>
-        <Cards styles={styles} data={data} />
+        {/* Cards parent Element  */}
+        <Cards
+          styles={styles}
+          data={data}
+          appliedFilters={appliedFilters}
+          fetchApi={fetchApi}
+        />
       </div>
     </main>
   );
 };
 
+// CSS Styles
 const styles = {
   cardsContainer: {
     width: "100%",
@@ -126,6 +245,8 @@ const styles = {
   },
   card: {
     width: "360px",
+    // minWidth: "300px",
+    // maxWidth: "360px",
     height: "594px",
     boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.2)",
     borderRadius: "15px",

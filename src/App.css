@@ -29,6 +29,11 @@ svg:hover{
 .option:hover{
   background-color: "black";
 }
+.closeIcon:hover{
+  background-color: rgb(226, 131, 115);
+  border-radius: 4px;
+  color: rgb(206, 63, 63);
+}
 
 aside{
   width: 18.53%;

@@ -1,10 +1,43 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
-const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
+const FilterBar = ({
+  width,
+  placeholder,
+  searchArea,
+  subTitle,
+  list,
+  setState,
+  tags,
+  handleChange,
+  searchedvalue,
+}) => {
   const [openList, setOpenList] = useState(false);
+
+  const dispatch = useDispatch();
   const handleOpenDropDown = () => {
     setOpenList(!openList);
   };
+
+  // filtering SuggestedList asper the Searchterm
+  const filteredRoles = list?.filter((role) =>
+    role?.toLowerCase().includes(searchedvalue.toLowerCase())
+  );
+
+  // Handle Add Tag/Filter
+  const handleTag = (value) => {
+    const toLower = value.toLowerCase();
+    const tagss = [...tags, toLower];
+    dispatch(setState(tagss));
+    setOpenList(false);
+  };
+  // Hanlde remove tag/filter
+  const handleRemoveTag = (tagToRemove) => {
+    const tagss = tags.filter((prev) => prev !== tagToRemove);
+    dispatch(setState(tagss));
+    setOpenList(false);
+  };
+
   return (
     <>
       <div
@@ -19,8 +52,9 @@ const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
+          // minWidth: width,
+          // maxWidth: "400px",
         }}
-        onClick={handleOpenDropDown}
       >
         <div
           style={{
@@ -31,6 +65,46 @@ const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
             //   backgroundColor: "gray",
           }}
         >
+          {/* Tags Iterating through Map */}
+          {tags?.map((item, index) => (
+            <div
+              style={{
+                height: "80%",
+                width: "auto",
+                // padding: "0 10px",
+                display: "flex",
+                backgroundColor: "#c9c5c5",
+                borderRadius: "3px",
+                fontSize: "12px",
+                marginRight: "5px",
+              }}
+              key={index}
+            >
+              <p
+                style={{
+                  paddingTop: "3px",
+                  paddingLeft: "10px",
+                  width: "80%",
+
+                  textWrap: "nowrap",
+                }}
+              >
+                {item}
+              </p>
+              <p
+                className="closeIcon"
+                style={{
+                  padding: "2.5px 7px",
+                  width: "20%",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleRemoveTag(item)}
+              >
+                x
+              </p>
+            </div>
+          ))}
           <input
             placeholder={placeholder}
             type="text"
@@ -40,33 +114,42 @@ const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
               outline: "none",
               border: "none",
             }}
+            onClick={handleOpenDropDown}
+            onChange={handleChange}
           />
-          <div
-            style={{
-              width: "2px",
-              height: "70%",
-              backgroundColor: "#646669",
-              borderRadius: "20px",
-              marginLeft: "8px",
-              marginRight: "8px",
-            }}
-          ></div>
-          <div style={{ width: "10%", height: "75%" }}>
-            {/* <img src="" style={{ objectFit: "contain" }} /> */}
-            <svg
-              height="20"
-              width="20"
-              viewBox="0 0 20 20"
-              aria-hidden="true"
-              focusable="false"
-              fill="#646669"
-            >
-              <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
-            </svg>
-          </div>
+          {list && (
+            <>
+              <div
+                style={{
+                  width: "2px",
+                  height: "70%",
+                  backgroundColor: "#646669",
+                  borderRadius: "20px",
+                  marginLeft: "8px",
+                  marginRight: "8px",
+                }}
+              ></div>
+              <div
+                style={{ width: "10%", height: "75%" }}
+                onClick={handleOpenDropDown}
+              >
+                <svg
+                  height="20"
+                  width="20"
+                  viewBox="0 0 20 20"
+                  aria-hidden="true"
+                  focusable="false"
+                  fill="#646669"
+                >
+                  <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
+                </svg>
+              </div>
+            </>
+          )}
         </div>
-        {/* Opening dropdownList */}
-        {openList && (
+
+        {/* Opening dropdownList/Suggested List */}
+        {openList && list && (
           <div
             style={{
               height: "auto",
@@ -94,7 +177,8 @@ const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
                 {subTitle}
               </div>
             )}
-            {Array.from({ length: 10 }).map((_, index) => (
+            {/* Suggested List as per filters */}
+            {filteredRoles?.map((item, index) => (
               <option
                 key={index}
                 style={{
@@ -105,9 +189,9 @@ const FilterBar = ({ width, placeholder, searchArea, subTitle }) => {
                   cursor: "pointer",
                 }}
                 className="option"
+                onClick={() => handleTag(item)}
               >
-                {" "}
-                FrontEnd{" "}
+                {item}
               </option>
             ))}
           </div>

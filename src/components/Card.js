@@ -106,7 +106,7 @@ const Card = ({
           <p style={{ color: "GrayText" }}> Minimum Experience </p>
           <p> {item?.minExp ?? 0} years</p>
         </div>
-        {/* Easy Apply and Referrals buttons */}
+        {/* Easy Apply and Referrals buttons section */}
         <Btn
           styles={btnStyles}
           title={btnTitle}
